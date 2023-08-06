@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  cafe-app:
+    depends_on:
+      - mongodb
+    build: ./bg
+    container_name: cafe-app
+    restart: always
+    ports:
+      - 3000:3000
+    links:
+      - mongodb
+    networks:
+      - cafe
+    environment:
+      - NODE_ENV=production
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    volumes:
+      - cafe-data:/data/db
+    ports:
+      - 27017:27017
+    logging:
+      driver: none
+    networks:
+      - cafe
+
+  cafe-ui:
+    build: ./ui
+    environment:
+      NODE_ENV: production
+    container_name: cafe-ui
+    ports:
+      - 4200:80
+    links:
+      - cafe-app
+    networks:
+      - cafe
+
+networks:
+  cafe: null
+volumes:
+  cafe-data: null
