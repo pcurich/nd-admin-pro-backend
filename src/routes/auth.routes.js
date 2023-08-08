@@ -12,7 +12,7 @@ const {
   changePassword,
 } = require("../controllers/auth.controller");
 const { check } = require("express-validator");
-const { validateFields } = require("../middleware/validate-fields");
+const { validateFields } = require("../middleware/validateFields");
 
 const router = Router();
 

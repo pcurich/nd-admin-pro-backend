@@ -1,9 +1,9 @@
 const path = require("path");
 const express = require("express");
-var morgan = require("morgan");
+const morgan = require("morgan");
 const helmet = require("helmet");
 const passport = require("passport");
-var cors = require("cors");
+const cors = require("cors");
 require("./config/passportJWT");
 
 // middleware
@@ -36,7 +36,7 @@ app.use("/api", express.static(path.join(__dirname, "uploads")));
 
 // middlewares
 app.use(helmet());
-// app.use(multerConfig);
+app.use(multerConfig);
 app.use(accessLogStream);
 app.use(cors());
 
@@ -49,7 +49,7 @@ app.use("/api/hospitals", require("./routes/hospitals.routes"));
 app.use("/api/doctors", require("./routes/doctors.routes"));
 app.use("/api/media", require("./routes/media.routes"));
 
-var route,
+let route,
   routes = [];
 
 app._router.stack.forEach(function (middleware) {
@@ -66,8 +66,8 @@ app._router.stack.forEach(function (middleware) {
 });
 
 routes.forEach(function (temp) {
-  var methods = "";
-  for (var method in temp.methods) {
+  let methods = "";
+  for (let method in temp.methods) {
     methods += method + ", ";
   }
   if (process.env.SH_ROUTE_LIST) {

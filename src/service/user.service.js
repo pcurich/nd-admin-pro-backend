@@ -1,13 +1,16 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const User = require("./../models/User");
 const { result200, result400, result500 } = require("../helpers/response");
-const { options } = require("../helpers/db");
+const { options } = require("../helpers/db-paginate");
 
 const getAll = async (limit, page) => {
-  var option = options(limit, page);
-  delete option.sort;
+  let option = options(limit, page);
+
+  // delete option.sort;
+
   try {
     const data = await User.paginate({ deleted: false }, option);
+    console.log("PCURCIH",data);
     data.docs.map((x) => x.toJSON());
     return result200(data, "List of Users");
   } catch (e) {

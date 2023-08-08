@@ -1,6 +1,11 @@
 const router = require("express").Router();
 const { check } = require("express-validator");
-const { validateFields } = require("../middleware/validate-fields");
+const { validateFields } = require("../middleware/validateFields");
+const {
+  isRolValid,
+  existEmail,
+  existUserById,
+} = require("../helpers/db-validators");
 
 const isAuthenticated = require("../middleware/authJwt").isAuthenticated;
 const passport = require("passport");
@@ -25,6 +30,8 @@ router.post(
     check("name").not().isEmpty(),
     check("password").not().isEmpty(),
     check("email").isEmail(),
+    check("email").custom(existEmail),
+    check("rol").custom(isRolValid),
     validateFields,
   ],
   newUser
@@ -34,16 +41,23 @@ router.put(
   [
     passport.authenticate("jwt", { session: true }),
     isAuthenticated,
+    check("id", "No es un ID valido").isMongoId(),
+    check("id").custom(existUserById),
     check("name").not().isEmpty(),
     check("email").isEmail(),
-    check("role").not().isEmpty(),
     validateFields,
   ],
   updUser
 );
 router.delete(
-  "/",
-  [passport.authenticate("jwt", { session: true }), isAuthenticated],
+  "/:id",
+  [
+    passport.authenticate("jwt", { session: true }),
+    isAuthenticated,
+    check("id", "No es un ID valido").isMongoId(),
+    check("id").custom(existUserById),
+    validateFields,
+  ],
   delUser
 );
-module.exports = router;
+module.exports = { router };

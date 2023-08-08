@@ -1,5 +1,5 @@
 const { response } = require("express");
-const { paginate } = require("../helpers/db");
+const { paginate } = require("../helpers/db-paginate");
 const { getAll } = require("../service/user.service");
 const { interceptor, R200, R404 } = require("../helpers/response");
 

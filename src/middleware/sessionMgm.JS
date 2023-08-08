@@ -1,19 +1,16 @@
 const session = require("express-session");
-const connectMongo = require("connect-mongo");
 const MongoStore = require("connect-mongo");
-const mongoose = require("mongoose");
-
-// const MONGODB_URI =  `mongodb://${config.MONGODB_USER}:${config.MONGODB_PASSWORD}@${config.MONGODB_HOST}:${config.MONGODB_PORT}/${config.MONGODB_SESSION}`;
 
 module.exports = session({
-  name: "session",
-  resave: false, //don't save session if unmodified
-  saveUninitialized: false, // don't create session until something stored
-  secret: "secret-hello-world",
+  name: "session", //The name of the cookie that will be stored on the client-side.
+  resave: true, //Forces the session to be saved back to the session store.
+  saveUninitialized: true, // Forces a session that is “uninitialized” to be saved to the session store.
+  secret: "secret-hello-world", //This is the secret used to sign the ID cookie.
+  httpOnly: true, //Specifies the value of httpOnly Set-Cookie attribute.
 
   store: MongoStore.create({
     mongoUrl: process.env.DB_CNN,
-    dbName: process.env.DB_CNN_SESSION_NAME,
+    dbName: process.env.DB_CNN_SESSION,
     collectionName: process.env.DB_CNN_SESSION_NAME,
     touchAfter: 24 * 3600, // time period in seconds
     ttl: 1 * 24 * 60 * 60, //1 dia

@@ -1,34 +1,42 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcryptjs");
-var mongoosePaginate = require("mongoose-paginate-v2");
 const toJson = require("@meanie/mongoose-to-json");
 const { updateIfCurrentPlugin } = require("mongoose-update-if-current");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const userSchema = Schema(
   {
     userName: { type: String, trim: true },
-    firstName: { type: String, trim: true, required: "Ingrese su Nombre" },
-    lastName: { type: String, trim: true, required: "Ingrese sus Apellidos" },
+    firstName: {
+      type: String,
+      trim: true,
+      required: [true, "Ingrese su Nombre"],
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      required: [true, "Ingrese sus Apellidos"],
+    },
     dni: {
       type: String,
       trim: true,
-      required: "Ingrese su Documento Nacional de Identidad",
+      required: [true, "Ingrese su Documento Nacional de Identidad"],
     },
     email: {
       type: String,
       unique: true,
       trim: true,
-      required: "Ingrese su correo electronico",
+      required: [true, "Ingrese su correo electronico"],
     },
     password: {
       type: String,
-      required: true,
-      required: "Ingrese una contraseña",
+      required: [true, "Ingrese una contraseña"],
       private: true,
     },
     state: { type: Boolean, default: true },
     picture: { type: String },
-    rolId: { type: Schema.Types.ObjectId, ref: "Rol" },
+    google: { type: Boolean },
+    rol: { type: String, required: true, emun: ["ADMIN_ROLE", "USER_ROLE"] },
     deleted: { type: Boolean, default: false },
   },
   {
