@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const jsonwebtoken = require("jsonwebtoken"); 
+const jsonwebtoken = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
 
@@ -11,15 +11,15 @@ const PRIV_KEY = fs.readFileSync(pathToKey, "utf8");
  */
 
 function genPassword(password) {
-  var salt = crypto.randomBytes(32).toString("hex");
-  var genHash = crypto
+  let salt = crypto.randomBytes(32).toString("hex");
+  let genHash = crypto
     .pbkdf2Sync(password, salt, 10000, 64, "sha512")
     .toString("hex");
   return { salt: salt, hash: genHash };
 }
 
 function validPassword(password, hash, salt) {
-  var hashVerify = crypto
+  let hashVerify = crypto
     .pbkdf2Sync(password, salt, 10000, 64, "sha512")
     .toString("hex");
   return hash === hashVerify;
@@ -45,16 +45,14 @@ function issueJWT(user) {
 function validJWT(req) {
   // Leer el Token
   const header = req.header(process.env.JWT_SECRET_HEADER);
-  console.log("pcurich=header=", header);
-  console.log("pcurich=header=!== undefined", header !== undefined);
-  console.log('pcurich=header=!== ""', header !== "");
-  console.log(header !== undefined && header !== "");
+
   if (header !== undefined && header !== "") {
     const token = header.split(" ")[1].trim();
     const payload = jsonwebtoken.decode(token);
     console.log("payload=", payload);
     return payload.sub;
   }
+
   return undefined;
 }
 

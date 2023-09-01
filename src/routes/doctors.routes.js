@@ -1,8 +1,8 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { validateFields } = require("../middleware/validateFields");
+const { validateFields } = require("../middleware/fields-validate");
 
-const isAuthenticated = require("../middleware/authJwt").isAuthenticated;
+const isAuthenticated = require("../middleware/auth-jwt").isAuthenticated;
 
 const {
   getDoctors,

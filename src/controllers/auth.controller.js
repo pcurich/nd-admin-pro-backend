@@ -1,5 +1,5 @@
 const { response } = require("express");
-const { googleVerify } = require("../helpers/google");
+const { googleVerify } = require("../helpers/google-verify");
 const { getMenuFrontEnd } = require("../helpers/menu");
 const passport = require("../helpers/password");
 const {
@@ -18,7 +18,7 @@ const {
   renewTokenUser,
 } = require("../service/auth.service");
 
-const signIn = async (req, res = response) => {
+const localSignIn = async (req, res = response) => {
   const { email, password } = req.body;
   const result = await signInUser(email, password);
   try {
@@ -40,6 +40,31 @@ const signIn = async (req, res = response) => {
     return interceptor(res, result).json(
       R500(result.code, "Error in Sign In", JSON.stringify(err))
     );
+  }
+};
+
+const googleSignIn = async (req, res = response) => {
+  const googleToken = req.body.token;
+
+  try {
+    const { name, email, picture } = await googleVerify(googleToken);
+
+    const userDB = await Usuario.findOne({ email }).exec();
+
+    if (!userDB) {
+      createUser(email, name, name, "", email, "@@@", picture, true);
+    } else {
+      update;
+      userDB.google = true;
+      userDB.picture = picture;
+      await userDB.save();
+    }
+
+    const token = await buildJWT(user.id);
+    const menu = getMenuFrontEnd(user.role);
+    res.json({ token, menu });
+  } catch (error) {
+    res.status(401).json({ msg: "Token no es correcto" });
   }
 };
 
@@ -72,37 +97,6 @@ const create = async (req, res, next) => {
     return interceptor(res, result).json(
       R404(result.code, "No se pudo crear al usuario", result.message)
     );
-  }
-};
-
-const googleSignIn = async (req, res = response) => {
-  const googleToken = req.body.token;
-
-  try {
-    const { name, email, picture } = await googleVerify(googleToken);
-
-    const userDB = await Usuario.findOne({ email });
-    let user;
-
-    if (!userDB) {
-      user = new User({
-        name,
-        email,
-        password: "@@@",
-        img: picture,
-        google: true,
-      });
-    } else {
-      user = userDB;
-      user.google = true;
-    }
-
-    await user.save();
-    const token = await buildJWT(user.id);
-    const menu = getMenuFrontEnd(user.role);
-    res.json({ token, menu });
-  } catch (error) {
-    res.status(401).json({ msg: "Token no es correcto" });
   }
 };
 
@@ -161,9 +155,10 @@ const changePassword = async (req, res = response) => {
 };
 
 module.exports = {
-  signIn,
-  create,
+  localSignIn,
   googleSignIn,
+  create,
+
   renewToken,
   findByEmail,
   findById,

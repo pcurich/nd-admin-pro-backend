@@ -1,4 +1,4 @@
-var HttpStatus = require("http-status-codes");
+let HttpStatus = require("http-status-codes");
 const { R401 } = require("../helpers/response");
 
 const isAuthenticated = (req, res, next) => {

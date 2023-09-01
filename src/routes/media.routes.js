@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const expressFileUpload = require("express-fileupload");
-const isAuthenticated = require("../middleware/authJwt").isAuthenticated;
+const isAuthenticated = require("../middleware/auth-jwt").isAuthenticated;
 const passport = require("passport");
 const { upload } = require("../controllers/media.controller");
 

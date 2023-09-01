@@ -7,7 +7,7 @@ const getUsers = async (req, res = response) => {
   const { limit, page } = paginate(req);
   const result = await getAll(limit, page);
 
-  if (result != undefined && result.status && result.data != undefined) {
+  if (result?.status && result?.data) {
     return interceptor(res, result).json(R200(result.data, "OK"));
   } else {
     return interceptor(res, result).json(
@@ -43,7 +43,7 @@ const newUser = async (req, res = response) => {
     userId
   );
 
-  if (result != undefined && result.status && result.data != undefined) {
+  if (result?.status && result?.data) {
     return interceptor(res, result).json(R200(result.data, "Usuario creado"));
   } else {
     return interceptor(res, result).json(

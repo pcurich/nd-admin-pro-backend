@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const passport = require("passport");
 const cors = require("cors");
-require("./config/passportJWT");
+require("./config/strategy-jwt");
 
 // middleware
 const accessLogStream = require("./middleware/log");

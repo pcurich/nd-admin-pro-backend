@@ -1,13 +1,13 @@
 const router = require("express").Router();
 const { check } = require("express-validator");
-const { validateFields } = require("../middleware/validateFields");
+const { validateFields } = require("../middleware/fields-validate");
 const {
   isRolValid,
   existEmail,
   existUserById,
 } = require("../helpers/db-validators");
 
-const isAuthenticated = require("../middleware/authJwt").isAuthenticated;
+const isAuthenticated = require("../middleware/auth-jwt").isAuthenticated;
 const passport = require("passport");
 require("../helpers/password");
 const {
@@ -60,4 +60,4 @@ router.delete(
   ],
   delUser
 );
-module.exports = { router };
+module.exports = router;

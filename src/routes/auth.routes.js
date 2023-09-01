@@ -1,9 +1,9 @@
 const { Router } = require("express");
 const passport = require("passport");
-require("../config/passportJWT")(passport);
-const isAuthenticated = require("../middleware/authJwt").isAuthenticated;
+require("../config/strategy-jwt")(passport);
+const isAuthenticated = require("../middleware/auth-jwt").isAuthenticated;
 const {
-  signIn,
+  localSignIn,
   create,
   googleSignIn,
   renewToken,
@@ -12,7 +12,7 @@ const {
   changePassword,
 } = require("../controllers/auth.controller");
 const { check } = require("express-validator");
-const { validateFields } = require("../middleware/validateFields");
+const { validateFields } = require("../middleware/fields-validate");
 
 const router = Router();
 
@@ -23,7 +23,7 @@ router.post(
     check("password", "El password es obligatorio").not().isEmpty(),
     validateFields,
   ],
-  signIn
+  localSignIn
 );
 
 router.post(

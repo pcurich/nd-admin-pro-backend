@@ -1,4 +1,4 @@
-var HttpStatus = require("http-status-codes");
+let HttpStatus = require("http-status-codes");
 const util = require("../helpers/password");
 
 /* Successful */

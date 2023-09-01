@@ -15,7 +15,6 @@ const options = {
 };
 
 const strategy = new JwtStrategy(options, (payload, done) => {
-  console.log("PCURICH=pathTokey", pathTokey);
   User.findById(payload.sub)
 
     .then((user) => {
