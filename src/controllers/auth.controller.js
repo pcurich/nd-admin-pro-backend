@@ -18,6 +18,8 @@ const {
   renewTokenUser,
 } = require("../service/auth.service");
 
+const { postDto, putDto, getByEmail } = require("../service/user.service");
+
 const localSignIn = async (req, res = response) => {
   const { email, password } = req.body;
   const result = await signInUser(email, password);
@@ -45,57 +47,43 @@ const localSignIn = async (req, res = response) => {
 
 const googleSignIn = async (req, res = response) => {
   const googleToken = req.body.token;
-
-  try {
-    const { name, email, picture } = await googleVerify(googleToken);
-
-    const userDB = await Usuario.findOne({ email }).exec();
-
-    if (!userDB) {
-      createUser(email, name, name, "", email, "@@@", picture, true);
-    } else {
-      update;
-      userDB.google = true;
-      userDB.picture = picture;
-      await userDB.save();
-    }
-
-    const token = await buildJWT(user.id);
-    const menu = getMenuFrontEnd(user.role);
-    res.json({ token, menu });
-  } catch (error) {
-    res.status(401).json({ msg: "Token no es correcto" });
-  }
-};
-
-const create = async (req, res, next) => {
-  const {
-    userName,
-    firstName,
-    lastName,
-    dni,
-    email,
-    password,
-    picture,
-    state,
-  } = req.body;
-
-  const result = await createUser(
-    userName,
-    firstName,
-    lastName,
-    dni,
-    email,
-    password,
-    !picture ? "default.png" : picture,
-    state
+  const { firstName, lastName, email, picture } = await googleVerify(
+    googleToken
   );
+  let result = {};
+  const userDB = await getByEmail(email);
+  console.log("userDB :>> ", userDB);
 
-  if (result != undefined && result.status && result.data != undefined) {
-    return interceptor(res, result).json(R200(result.data, "Usuario creado"));
+  if (!userDB.data) {
+    result = await postDto(
+      email,
+      firstName,
+      lastName,
+      "00000000",
+      email,
+      "@@@",
+      !picture ? "default.png" : picture,
+      "USER_ROLE",
+      true
+    );
+  } else {
+    result = await putDto(userDB.data.id, {
+      firstName,
+      lastName,
+      picture,
+      state: true,
+      google: true,
+    });
+  }
+
+  if (result?.status && result?.data) {
+    console.log("result :>> ", result);
+    return interceptor(res, result).json(
+      R200(result.data, "Usuario en sesion ")
+    );
   } else {
     return interceptor(res, result).json(
-      R404(result.code, "No se pudo crear al usuario", result.message)
+      R404(result.code, "Users", result.message)
     );
   }
 };
@@ -157,7 +145,6 @@ const changePassword = async (req, res = response) => {
 module.exports = {
   localSignIn,
   googleSignIn,
-  create,
 
   renewToken,
   findByEmail,

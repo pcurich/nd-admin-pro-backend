@@ -6,8 +6,8 @@ const { updateIfCurrentPlugin } = require("mongoose-update-if-current");
 const rolSchema = new Schema(
   {
     name: { type: String, required: [true, "El nombre es obligatorio"] },
-    acl: [{ type: Schema.Types.ObjectId, ref: "Acl" }],
-    state: { type: Boolean, default: true }, 
+    state: { type: Boolean, default: true },
+    canDelete: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
     updatedBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
@@ -26,4 +26,4 @@ rolSchema.plugin(mongoosePaginate);
 rolSchema.plugin(toJson);
 rolSchema.plugin(updateIfCurrentPlugin, { strategy: "timestamp" });
 
-module.exports = model("Rol", rolSchema);
+module.exports = model("Rol ", rolSchema);

@@ -12,6 +12,9 @@ const sessionManagement = require("./middleware/sessionMgm");
 const multerConfig = require("./middleware/multer");
 const controlAccess = require("./middleware/cors");
 
+//seeds
+const { createRoles } = require("./libs/createRole");
+
 // Initializations
 const app = express();
 app.set("trust proxy", 1); // trust first proxy
@@ -32,7 +35,7 @@ app.use(morgan("combined"));
 app.set("port", process.env.PORT);
 
 // static files
-app.use("/api", express.static(path.join(__dirname, "uploads")));
+app.use("/api", express.static("uploads"));
 
 // middlewares
 app.use(helmet());
@@ -74,5 +77,8 @@ routes.forEach(function (temp) {
     console.log("[" + methods + "]" + temp.path);
   }
 });
+
+// DataBase
+createRoles();
 
 module.exports = app;

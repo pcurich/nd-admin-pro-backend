@@ -1,34 +1,25 @@
 const { response } = require("express");
 const { paginate } = require("../helpers/db-paginate");
-const { getAll } = require("../service/user.service");
+const { getAll, postDto, putDto, delDto } = require("../service/user.service");
 const { interceptor, R200, R404 } = require("../helpers/response");
 
 const getUsers = async (req, res = response) => {
   const { limit, page } = paginate(req);
   const result = await getAll(limit, page);
-
   if (result?.status && result?.data) {
     return interceptor(res, result).json(R200(result.data, "OK"));
   } else {
     return interceptor(res, result).json(
-      R404(result.code, "Users", "No se puede leer a los usuarios")
+      R404(result.code, "Users", result.message)
     );
   }
 };
 
 const newUser = async (req, res = response) => {
   const userId = req.user._id;
-  const {
-    userName,
-    firstName,
-    lastName,
-    dni,
-    state,
-    picture,
-    rolId,
-    email,
-    password,
-  } = req.body;
+
+  const { userName, firstName, lastName, dni, picture, rol, email, password } =
+    req.body;
 
   const result = await postDto(
     userName,
@@ -37,9 +28,8 @@ const newUser = async (req, res = response) => {
     dni,
     email,
     password,
-    state,
     !picture ? "default.png" : picture,
-    rolId,
+    rol,
     userId
   );
 
@@ -53,77 +43,47 @@ const newUser = async (req, res = response) => {
 };
 
 const updUser = async (req, res = response) => {
-  // TODO: Validar token y comprobar si es el usuario correcto
+  const id = req.params.id;
+  const userId = req.user._id;
+  const { firstName, lastName, dni, picture, state, rol } = req.body;
 
-  const uid = req.params.id;
+  const result = await putDto(
+    id,
+    {
+      firstName,
+      lastName,
+      dni,
+      picture,
+      state,
+      rol,
+    },
+    userId
+  );
 
-  try {
-    const userDB = await User.findById(uid);
-
-    if (!userDB) {
-      return res.status(404).json({
-        msg: "No existe un usuario por ese id",
-      });
-    }
-
-    const { password, google, email, ...campos } = req.body;
-
-    if (userDB.email !== email) {
-      const existEmail = await User.findOne({
-        email,
-      });
-
-      if (existEmail) {
-        return res.status(400).json({
-          ok: false,
-          msg: "El correo ya está registrado",
-        });
-      }
-    }
-
-    if (!userDB.google) {
-      campos.email = email;
-    } else if (userDB.email !== email) {
-      return res.status(400).json({
-        msg: "Usuario de google no pueden cambiar su correo",
-      });
-    }
-
-    const userUpd = await User.findByIdAndUpdate(uid, campos, {
-      new: true,
-    });
-
-    res.json({
-      user: userUpd,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      msg: "Error inesperado",
-    });
+  if (result?.status && result?.data) {
+    return interceptor(res, result).json(
+      R200(result.data, "Usuario actualizado")
+    );
+  } else {
+    return interceptor(res, result).json(
+      R404(result.code, "Users", result.message)
+    );
   }
 };
 
 const delUser = async (req, res = response) => {
-  const uid = req.params.id;
-  try {
-    const userDB = await User.findById(uid);
+  const id = req.params.id;
+  const userId = req.user._id;
+  const result = await delDto(id, userId);
 
-    if (!userDB) {
-      return res.status(404).json({
-        msg: "No existe un usuario por ese id",
-      });
-    }
-
-    await User.findByIdAndDelete(uid);
-    res.json({
-      msg: "Usuario eliminado",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      msg: "Error inesperado",
-    });
+  if (result?.status && result?.data) {
+    return interceptor(res, result).json(
+      R200(result.data, "Usuario eliminado")
+    );
+  } else {
+    return interceptor(res, result).json(
+      R404(result.code, "Users", result.message)
+    );
   }
 };
 

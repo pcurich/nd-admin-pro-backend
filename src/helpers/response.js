@@ -105,7 +105,7 @@ const R500 = (
  * Manejo interno dentro de la aplicacion
  */
 const result200 = (data, message) => {
-  console.log("PCURICH = " + message, data);
+  console.log("PCURICH 200 = " + message, data);
   return {
     status: true,
     data,
@@ -115,7 +115,7 @@ const result200 = (data, message) => {
 };
 
 const result400 = (message) => {
-  console.log("PCURICH = " + message, {});
+  console.log("PCURICH 400 = " + message, {});
   return {
     status: false,
     data: undefined,
@@ -125,7 +125,7 @@ const result400 = (message) => {
 };
 
 const result500 = (message, err = undefined) => {
-  console.error("PCURICH = " + message, err);
+  console.error("PCURICH 500 = " + message, err);
   return {
     status: false,
     data: undefined,

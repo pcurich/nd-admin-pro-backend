@@ -1,5 +1,5 @@
 const paginate = (req) => {
-  const limit = Number(req.query.limit) || 3;
+  const limit = Number(req.query.limit) || 5;
   const page = Number(req.query.page) || 0;
 
   return { limit, page };

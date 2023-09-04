@@ -27,7 +27,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: true }),
     isAuthenticated,
-    check("name").not().isEmpty(),
+    check("userName").not().isEmpty(),
     check("password").not().isEmpty(),
     check("email").isEmail(),
     check("email").custom(existEmail),
@@ -43,8 +43,7 @@ router.put(
     isAuthenticated,
     check("id", "No es un ID valido").isMongoId(),
     check("id").custom(existUserById),
-    check("name").not().isEmpty(),
-    check("email").isEmail(),
+    check("userName").not().isEmpty(),
     validateFields,
   ],
   updUser

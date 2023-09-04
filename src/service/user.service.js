@@ -10,15 +10,15 @@ const getAll = async (limit, page) => {
 
   try {
     const data = await User.paginate({ deleted: false }, option);
-    console.log("PCURCIH",data);
-    data.docs.map((x) => x.toJSON());
+    console.log("PCURICH DATA =", data);
+    data.itemsList.map((x) => x.toJSON());
     return result200(data, "List of Users");
   } catch (e) {
     return result500("Error to get users list", e);
   }
 };
 
-const getOne = async (id) => {
+const getOneById = async (id) => {
   try {
     const data = await User.findById(id)
       .populate({ path: "createdBy", select: "userName" })
@@ -26,10 +26,27 @@ const getOne = async (id) => {
     if (data) {
       return result200(data.toJSON(), "User found");
     } else {
-      return result400("User not found");
+      return result400("User by Id not found");
     }
   } catch (e) {
-    return result500("Error to get categoryId:" + id, e);
+    return result500("Error to get user by Id:" + id, e);
+  }
+};
+
+const getByEmail = async (email) => {
+  try {
+    const data = await User.findOne({
+      email,
+    })
+      .populate({ path: "createdBy", select: "userName" })
+      .populate({ path: "updatedBy", select: "userName" });
+    if (data) {
+      return result200(data.toJSON(), "User found");
+    } else {
+      return result400("User by Email not found");
+    }
+  } catch (e) {
+    return result500("Error to get user by email: " + email, e);
   }
 };
 
@@ -41,7 +58,8 @@ const postDto = async (
   email,
   password,
   picture,
-  rolId,
+  rol,
+  google,
   userId
 ) => {
   try {
@@ -53,10 +71,15 @@ const postDto = async (
       email,
       password,
       picture,
-      rolId,
-      createdBy: ObjectId(userId),
-      updatedBy: ObjectId(userId),
+      rol,
+      google,   
+      createdBy: userId ? new ObjectId(userId) : undefined,
+      updatedBy: userId ? new ObjectId(userId) : undefined,
     });
+    Object.keys(data).forEach(
+      (key) => data[key] === undefined && delete data[key]
+    );
+
     data.password = await data.encryptPassword(password);
     await data.save();
     return result200(data.toJSON(), "User Created");
@@ -65,9 +88,16 @@ const postDto = async (
   }
 };
 
-const putDto = async (id, payload) => {
+const putDto = async (id, payload, userId) => {
   try {
-    const data = await User.findByIdAndUpdate(ObjectId(id), payload, {
+    payload = {
+      ...payload,
+      updatedBy: userId,
+    };
+    Object.keys(payload).forEach(
+      (key) => payload[key] === undefined && delete payload[key]
+    ); 
+    const data = await User.findByIdAndUpdate(new ObjectId(id), payload, {
       new: true,
     });
     return result200(data.toJSON(), "User updated");
@@ -88,4 +118,4 @@ const delDto = async (id, userId) => {
   }
 };
 
-module.exports = { getAll, getOne, postDto, putDto, delDto };
+module.exports = { getAll, getOneById, getByEmail, postDto, putDto, delDto };

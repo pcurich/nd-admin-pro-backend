@@ -3,8 +3,7 @@ const passport = require("passport");
 require("../config/strategy-jwt")(passport);
 const isAuthenticated = require("../middleware/auth-jwt").isAuthenticated;
 const {
-  localSignIn,
-  create,
+  localSignIn, 
   googleSignIn,
   renewToken,
   findByEmail,
@@ -17,13 +16,22 @@ const { validateFields } = require("../middleware/fields-validate");
 const router = Router();
 
 router.post(
-  "/signIn",
+  "/localSignIn",
   [
     check("email", "El email es obligatorio").isEmail(),
     check("password", "El password es obligatorio").not().isEmpty(),
     validateFields,
   ],
   localSignIn
+);
+
+router.post(
+  "/googleSignIn",
+  [
+    check("token", "El token de Google es obligatorio").not().isEmpty(),
+    validateFields,
+  ],
+  googleSignIn
 );
 
 router.post(
@@ -36,29 +44,6 @@ router.post(
   "/findById",
   [check("id", "El id es obligatorio").not().isEmpty(), validateFields],
   findById
-);
-
-router.post(
-  "/createUser",
-  [
-    check("email", "El email es obligatorio").isEmail(),
-    check("password", "El password es obligatorio").not().isEmpty(),
-    check("userName", "El nombre de usuario es obligatorio").not().isEmpty(),
-    check("lastName", "El apellido es obligatorio").not().isEmpty(),
-    check("firstName", "El nombre es obligatorio").not().isEmpty(),
-    check("dni", "El dni es obligatorio").not().isEmpty(),
-    validateFields,
-  ],
-  create
-);
-
-router.post(
-  "/google",
-  [
-    check("token", "El token de Google es obligatorio").not().isEmpty(),
-    validateFields,
-  ],
-  googleSignIn
 );
 
 router.post(
