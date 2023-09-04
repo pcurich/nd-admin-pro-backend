@@ -22,6 +22,7 @@ router.get(
   [passport.authenticate("jwt", { session: true }), isAuthenticated],
   getUsers
 );
+
 router.post(
   "/",
   [
@@ -36,6 +37,7 @@ router.post(
   ],
   newUser
 );
+
 router.put(
   "/:id",
   [
@@ -48,6 +50,7 @@ router.put(
   ],
   updUser
 );
+
 router.delete(
   "/:id",
   [
@@ -59,4 +62,5 @@ router.delete(
   ],
   delUser
 );
+
 module.exports = router;

@@ -52,6 +52,9 @@ app.use("/api/hospitals", require("./routes/hospitals.routes"));
 app.use("/api/doctors", require("./routes/doctors.routes"));
 app.use("/api/media", require("./routes/media.routes"));
 
+app.use("/api/categories", require("./routes/categories.routes"));
+app.use("/api/products", require("./routes/products.routes"));
+
 let route,
   routes = [];
 
