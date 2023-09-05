@@ -26,4 +26,4 @@ rolSchema.plugin(mongoosePaginate);
 rolSchema.plugin(toJson);
 rolSchema.plugin(updateIfCurrentPlugin, { strategy: "timestamp" });
 
-module.exports = model("Rol ", rolSchema);
+module.exports = model("Rol", rolSchema);

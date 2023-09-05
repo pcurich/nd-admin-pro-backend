@@ -1,5 +1,4 @@
-const User = require("../models/User");
-const Rol = require("../models/Rol");
+const { User, Rol } = require("../models");
 
 const checkDuplicateUsernameOrEmail = async (req, res, next) => {
   const { email, userName } = req.body;

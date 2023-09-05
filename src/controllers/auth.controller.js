@@ -10,8 +10,7 @@ const {
   R500,
 } = require("../helpers/response");
 const {
-  signInUser,
-  createUser,
+  signInUser, 
   findUserByEmail,
   findUserById,
   changePasswordUser,

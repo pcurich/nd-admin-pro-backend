@@ -6,7 +6,7 @@ const ExtractJwt = require("passport-jwt").ExtractJwt;
 const pathTokey = path.join(__dirname, "..", "../id_rsa_pub.pem");
 const PUB_KEY = fs.readFileSync(pathTokey, "utf8");
 
-const User = require("../models/User");
+const { User } = require("../models");
 
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

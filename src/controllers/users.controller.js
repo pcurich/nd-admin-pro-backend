@@ -1,9 +1,15 @@
-const { response } = require("express");
+const { response, request } = require("express");
 const { paginate } = require("../helpers/db-paginate");
-const { getAll, postDto, putDto, delDto } = require("../service/user.service");
+const {
+  getAll,
+  getOne,
+  postDto,
+  putDto,
+  delDto,
+} = require("../service/user.service");
 const { interceptor, R200, R404 } = require("../helpers/response");
 
-const getUsers = async (req, res = response) => {
+const getUsers = async (req = request, res = response) => {
   const { limit, page } = paginate(req);
   const result = await getAll(limit, page);
   if (result?.status && result?.data) {
@@ -15,23 +21,35 @@ const getUsers = async (req, res = response) => {
   }
 };
 
-const newUser = async (req, res = response) => {
+const getUser = async (req = request, res = response) => {
+  const { id } = req.params;
+  const payload = { _id: id };
+  const result = await getOne(payload);
+  if (result?.status && result?.data) {
+    return interceptor(res, result).json(R200(result.data, "OK"));
+  } else {
+    return interceptor(res, result).json(
+      R404(result.code, "Users", result.message)
+    );
+  }
+};
+
+const newUser = async (req = request, res = response) => {
   const userId = req.user._id;
 
   const { userName, firstName, lastName, dni, picture, rol, email, password } =
     req.body;
-
-  const result = await postDto(
+  const payload = {
     userName,
     firstName,
     lastName,
     dni,
+    picture: !picture ? "default.png" : picture,
+    rol,
     email,
     password,
-    !picture ? "default.png" : picture,
-    rol,
-    userId
-  );
+  };
+  const result = await postDto(payload, userId);
 
   if (result?.status && result?.data) {
     return interceptor(res, result).json(R200(result.data, "Usuario creado"));
@@ -42,7 +60,7 @@ const newUser = async (req, res = response) => {
   }
 };
 
-const updUser = async (req, res = response) => {
+const updUser = async (req = request, res = response) => {
   const id = req.params.id;
   const userId = req.user._id;
   const { firstName, lastName, dni, picture, state, rol } = req.body;
@@ -61,25 +79,21 @@ const updUser = async (req, res = response) => {
   );
 
   if (result?.status && result?.data) {
-    return interceptor(res, result).json(
-      R200(result.data, "Usuario actualizado")
-    );
+    return interceptor(res, result).json(R200(result.data, "User updated"));
   } else {
     return interceptor(res, result).json(
-      R404(result.code, "Users", result.message)
+      R404(result.code, "User", result.message)
     );
   }
 };
 
-const delUser = async (req, res = response) => {
+const delUser = async (req = request, res = response) => {
   const id = req.params.id;
   const userId = req.user._id;
   const result = await delDto(id, userId);
 
   if (result?.status && result?.data) {
-    return interceptor(res, result).json(
-      R200(result.data, "Usuario eliminado")
-    );
+    return interceptor(res, result).json(R200(result.data, "User deleted"));
   } else {
     return interceptor(res, result).json(
       R404(result.code, "Users", result.message)
@@ -89,6 +103,7 @@ const delUser = async (req, res = response) => {
 
 module.exports = {
   getUsers,
+  getUser,
   newUser,
   updUser,
   delUser,

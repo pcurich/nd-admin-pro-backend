@@ -1,7 +1,7 @@
-const Rol = require("../models/Rol");
+const { Rol } = require("../models");
 
 const createRoles = async () => {
-  let rols = await Rol.countDocuments({});
+  let rols = Rol.countDocuments({});
   if (rols == 0) {
     const rolUser = new Rol({
       name: "USER_ROLE",

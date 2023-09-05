@@ -1,12 +1,10 @@
 const ObjectId = require("mongoose").Types.ObjectId;
-const User = require("./../models/User");
+const { User } = require("./../models");
 const { result200, result400, result500 } = require("../helpers/response");
 const { options } = require("../helpers/db-paginate");
 
 const getAll = async (limit, page) => {
   let option = options(limit, page);
-
-  // delete option.sort;
 
   try {
     const data = await User.paginate({ deleted: false }, option);
@@ -18,9 +16,9 @@ const getAll = async (limit, page) => {
   }
 };
 
-const getOneById = async (id) => {
+const getOne = async (payload) => {
   try {
-    const data = await User.findById(id)
+    const data = await User.findOne(payload)
       .populate({ path: "createdBy", select: "userName" })
       .populate({ path: "updatedBy", select: "userName" });
     if (data) {
@@ -33,54 +31,16 @@ const getOneById = async (id) => {
   }
 };
 
-const getByEmail = async (email) => {
+const postDto = async (payload, userId) => {
   try {
-    const data = await User.findOne({
-      email,
-    })
-      .populate({ path: "createdBy", select: "userName" })
-      .populate({ path: "updatedBy", select: "userName" });
-    if (data) {
-      return result200(data.toJSON(), "User found");
-    } else {
-      return result400("User by Email not found");
-    }
-  } catch (e) {
-    return result500("Error to get user by email: " + email, e);
-  }
-};
+    payload.createdBy = userId ? new ObjectId(userId) : undefined;
+    payload.updatedBy = userId ? new ObjectId(userId) : undefined;
 
-const postDto = async (
-  userName,
-  firstName,
-  lastName,
-  dni,
-  email,
-  password,
-  picture,
-  rol,
-  google,
-  userId
-) => {
-  try {
-    const data = new User({
-      userName,
-      firstName,
-      lastName,
-      dni,
-      email,
-      password,
-      picture,
-      rol,
-      google,   
-      createdBy: userId ? new ObjectId(userId) : undefined,
-      updatedBy: userId ? new ObjectId(userId) : undefined,
-    });
-    Object.keys(data).forEach(
-      (key) => data[key] === undefined && delete data[key]
+    Object.keys(payload).forEach(
+      (key) => payload[key] === undefined && delete payload[key]
     );
-
-    data.password = await data.encryptPassword(password);
+    const data = new User(payload);
+    data.password = await data.encryptPassword(payload.password);
     await data.save();
     return result200(data.toJSON(), "User Created");
   } catch (e) {
@@ -96,7 +56,7 @@ const putDto = async (id, payload, userId) => {
     };
     Object.keys(payload).forEach(
       (key) => payload[key] === undefined && delete payload[key]
-    ); 
+    );
     const data = await User.findByIdAndUpdate(new ObjectId(id), payload, {
       new: true,
     });
@@ -110,7 +70,7 @@ const delDto = async (id, userId) => {
   try {
     const data = await User.findByIdAndUpdate(id, {
       deleted: true,
-      updatedBy: userId,
+      updatedBy: new ObjectId(userId),
     });
     return result200(data.toJSON(), "Delete User with id:" + id);
   } catch (e) {
@@ -118,4 +78,4 @@ const delDto = async (id, userId) => {
   }
 };
 
-module.exports = { getAll, getOneById, getByEmail, postDto, putDto, delDto };
+module.exports = { getAll, getOne, postDto, putDto, delDto };

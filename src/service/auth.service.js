@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const { User } = require("../models");
 const { result200, result400, result500 } = require("../helpers/response");
 
 const signInUser = async (email, password) => {

@@ -12,15 +12,21 @@ const passport = require("passport");
 require("../helpers/password");
 const {
   getUsers,
+  getUser,
   newUser,
   updUser,
   delUser,
 } = require("../controllers/users.controller");
 
 router.get(
-  "/:limit?/:page?",
+  "/",
   [passport.authenticate("jwt", { session: true }), isAuthenticated],
   getUsers
+);
+router.get(
+  "/:id",
+  [passport.authenticate("jwt", { session: true }), isAuthenticated],
+  getUser
 );
 
 router.post(
