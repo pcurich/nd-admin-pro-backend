@@ -1,41 +1,20 @@
 const { Rol } = require("../models");
 
 const createRoles = async () => {
-  let rols = Rol.countDocuments({});
+  let rols = await Rol.countDocuments({});
+  console.log("Roles en Base de datos  :>> ", rols);
   if (rols == 0) {
-    const rolUser = new Rol({
-      name: "USER_ROLE",
-      state: true,
-      canDelete: false,
+    const ROLES = ["USER_ROLE", "ADMIN_ROLE", "WORKER_ROLE", "AGENT_ROLE"];
+    ROLES.forEach(async (e) => {
+      const rol = new Rol({
+        name: e,
+        state: true,
+        canDelete: false,
+      });
+      await rol.save();
     });
 
-    const rolAdmin = new Rol({
-      name: "ADMIN_ROLE",
-      state: true,
-      canDelete: false,
-    });
-
-    const rolWorker = new Rol({
-      name: "WORKER_ROLE",
-      state: true,
-      canDelete: false,
-    });
-
-    const rolAgent = new Rol({
-      name: "AGENT_ROLE",
-      state: true,
-      canDelete: false,
-    });
-
-    await rolAdmin.save();
-    await rolUser.save();
-
-    console.log("Roles creados satisfactoriamente", [
-      rolAdmin,
-      rolUser,
-      rolWorker,
-      rolAgent,
-    ]);
+    console.log("Roles creados satisfactoriamente", JSON.stringify(ROLES));
   }
 };
 
