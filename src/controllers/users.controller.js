@@ -29,7 +29,7 @@ const getUser = async (req = request, res = response) => {
     return interceptor(res, result).json(R200(result.data, "OK"));
   } else {
     return interceptor(res, result).json(
-      R404(result.code, "Users", result.message)
+      R404(result.code, "User", result.message)
     );
   }
 };
@@ -39,23 +39,17 @@ const newUser = async (req = request, res = response) => {
 
   const { userName, firstName, lastName, dni, picture, rol, email, password } =
     req.body;
-  const payload = {
-    userName,
-    firstName,
-    lastName,
-    dni,
-    picture: !picture ? "default.png" : picture,
-    rol,
-    email,
-    password,
-  };
-  const result = await postDto(payload, userId);
+
+  const result = await postDto(
+    { userName, firstName, lastName, dni, picture, rol, email, password },
+    userId
+  );
 
   if (result?.status && result?.data) {
-    return interceptor(res, result).json(R200(result.data, "Usuario creado"));
+    return interceptor(res, result).json(R200(result.data, "User created"));
   } else {
     return interceptor(res, result).json(
-      R404(result.code, "Users", result.message)
+      R404(result.code, "User", result.message)
     );
   }
 };
@@ -96,7 +90,7 @@ const delUser = async (req = request, res = response) => {
     return interceptor(res, result).json(R200(result.data, "User deleted"));
   } else {
     return interceptor(res, result).json(
-      R404(result.code, "Users", result.message)
+      R404(result.code, "User", result.message)
     );
   }
 };

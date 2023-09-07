@@ -6,7 +6,6 @@ const {
   existEmail,
   existUserById,
 } = require("../helpers/db-validators");
-
 const isAuthenticated = require("../middleware/auth-jwt").isAuthenticated;
 const passport = require("passport");
 require("../helpers/password");
@@ -23,6 +22,7 @@ router.get(
   [passport.authenticate("jwt", { session: true }), isAuthenticated],
   getUsers
 );
+
 router.get(
   "/:id",
   [passport.authenticate("jwt", { session: true }), isAuthenticated],

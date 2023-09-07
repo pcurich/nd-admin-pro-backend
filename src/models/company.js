@@ -17,8 +17,13 @@ const companySchema = Schema(
       unique: true,
       trim: true,
     },
+    logo: { type: String, trim: true, default: "default.png" },
     agents: [{ type: Schema.Types.ObjectId, ref: "User" }],
     offices: [{ type: Schema.Types.ObjectId, ref: "Office" }],
+    state: { type: Boolean, default: true },
+    deleted: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    updatedBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     timestamps: true,

@@ -13,7 +13,7 @@ const categorySchema = Schema(
       required: [true, "Ingrese el nombre"],
     },
     state: { type: Boolean, default: true },
-    picture: { type: String },
+    picture: { type: String, trim: true, default: "default.png"  },
     color: { type: String },
     deleted: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
