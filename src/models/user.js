@@ -36,7 +36,11 @@ const userSchema = Schema(
     state: { type: Boolean, default: true },
     picture: { type: String },
     google: { type: Boolean, default: false },
-    rol: { type: String, required: true, emun: ["ADMIN_ROLE", "USER_ROLE"] },
+    rol: {
+      type: String,
+      required: true,
+      emun: ["ADMIN_ROLE", "USER_ROLE", "WORKER_ROLE", "AGENT_ROLE"],
+    },
     deleted: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
     updatedBy: { type: Schema.Types.ObjectId, ref: "User" },
