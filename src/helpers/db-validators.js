@@ -1,4 +1,4 @@
-const { User, Rol, Category, Company } = require("../models");
+const { User, Rol, Category, Company, Office } = require("../models");
 
 const isRolValid = async (name = "") => {
   const isRole = await Rol.findOne({ name }).exec();
@@ -25,10 +25,16 @@ const existCompanyById = async (id) => {
   if (!isEntity) throw new Error(`El id no existe ${id}`);
 };
 
+const existOfficeById = async (id) => {
+  const isEntity = await Office.findById(id).exec();
+  if (!isEntity) throw new Error(`El id no existe ${id}`);
+};
+
 module.exports = {
   isRolValid,
   existUserById,
   existCategoryById,
   existEmail,
   existCompanyById,
+  existOfficeById,
 };
